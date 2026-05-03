@@ -1,4 +1,4 @@
-# PaneKit
+# Panel4Liu
 
 Static documentation page for JavaScript window design patterns. The page opens with separate iframe-window and terminal-window previews, then provides implementation snippets.
 

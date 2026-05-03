@@ -1,5 +1,5 @@
 const project = {
-  name: "PaneKit",
+  name: "Panel4Liu",
   maintainerSite: "https://tony-liu.com",
   intro:
     "Live previews and implementation notes for JavaScript window patterns: a React iframe window component and plain JavaScript terminal controls.",
