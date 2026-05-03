@@ -654,16 +654,16 @@ function buildContactSection() {
 function buildFooter() {
   const footer = createElement("footer", { className: "site-footer" });
   const inner = createElement("div", { className: "footer-inner" });
-  const contactLink = createElement("a", {
-    text: "tony-liu.com",
-    attributes: { href: project.maintainerSite, target: "_blank", rel: "noreferrer" }
+  const domainLink = createElement("a", {
+    text: "liu.js.org",
+    attributes: { href: "https://liu.js.org", target: "_blank", rel: "noreferrer" }
   });
 
   inner.append(
     createElement("span", { text: `© ${new Date().getFullYear()} ${project.name}` }),
-    createElement("span", { text: "Maintainer: " })
+    createElement("span", { text: "Site: " })
   );
-  inner.lastElementChild.append(contactLink);
+  inner.lastElementChild.append(domainLink);
   footer.append(inner);
   return footer;
 }
