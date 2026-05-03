@@ -413,11 +413,18 @@ function buildTerminalPreview() {
     appendLine();
   }
 
+  function syncShellState() {
+    shell.classList.toggle("is-minimized", terminal.classList.contains("is-minimized"));
+    shell.classList.toggle("is-closed", terminal.classList.contains("is-closed"));
+    shell.classList.toggle("is-fullscreen", terminal.classList.contains("is-fullscreen"));
+  }
+
   function setTerminalFullscreen(isFullscreen) {
     terminal.classList.remove("is-closed", "is-minimized");
     terminal.classList.toggle("is-fullscreen", isFullscreen);
     document.body.classList.toggle("preview-terminal-fullscreen-open", isFullscreen);
     wakeButton.hidden = true;
+    syncShellState();
     scrollToBottom();
   }
 
@@ -425,6 +432,7 @@ function buildTerminalPreview() {
     terminal.classList.remove("is-closed", "is-minimized", "is-fullscreen");
     document.body.classList.remove("preview-terminal-fullscreen-open");
     wakeButton.hidden = true;
+    syncShellState();
     input.focus();
   }
 
@@ -434,6 +442,7 @@ function buildTerminalPreview() {
     terminal.classList.toggle("is-minimized", minimized);
     document.body.classList.remove("preview-terminal-fullscreen-open");
     wakeButton.hidden = true;
+    syncShellState();
   }
 
   function closeTerminalWindow() {
@@ -441,6 +450,7 @@ function buildTerminalPreview() {
     terminal.classList.add("is-closed");
     document.body.classList.remove("preview-terminal-fullscreen-open");
     wakeButton.hidden = false;
+    syncShellState();
   }
 
   controls.addEventListener("click", (event) => {

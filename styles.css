@@ -533,6 +533,14 @@ textarea {
 .terminal-preview-shell {
   display: flex;
   flex-direction: column;
+  height: clamp(520px, 68vh, 680px);
+  min-height: 0;
+}
+
+.terminal-preview-shell.is-minimized,
+.terminal-preview-shell.is-closed,
+.terminal-preview-shell.is-fullscreen {
+  height: auto;
 }
 
 .terminal-preview-layout {
@@ -546,6 +554,7 @@ textarea {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -572,8 +581,8 @@ textarea {
 }
 
 .terminal-body-preview {
-  min-height: 290px;
-  max-height: 420px;
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   background: #090b0f;
   color: #d7dee8;
@@ -673,11 +682,17 @@ textarea {
   position: fixed;
   inset: 20px;
   z-index: 70;
+  display: flex;
+  height: auto;
   min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
 }
 
 .terminal-window-preview.is-fullscreen .terminal-body-preview {
   flex: 1;
+  min-height: 0;
   max-height: none;
 }
 
@@ -1133,8 +1148,7 @@ body.preview-terminal-fullscreen-open {
     font-size: 1.16rem;
   }
 
-  .preview-iframe-viewport,
-  .terminal-body-preview {
+  .preview-iframe-viewport {
     min-height: 320px;
   }
 
@@ -1189,9 +1203,12 @@ body.preview-terminal-fullscreen-open {
     order: 4;
   }
 
-  .preview-iframe-viewport,
-  .terminal-body-preview {
+  .preview-iframe-viewport {
     min-height: 280px;
+  }
+
+  .terminal-preview-shell {
+    height: clamp(430px, 70vh, 560px);
   }
 
   .preview-window.is-primary .preview-iframe-viewport {
