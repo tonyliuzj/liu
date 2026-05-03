@@ -619,6 +619,14 @@ textarea {
   color: #ff7c7c;
 }
 
+.terminal-line.warn {
+  color: #f1c56a;
+}
+
+.terminal-line.system {
+  color: #a7b0c0;
+}
+
 .prompt {
   color: #8ea0ff;
   white-space: nowrap;
@@ -696,7 +704,8 @@ textarea {
   max-height: none;
 }
 
-body.preview-terminal-fullscreen-open {
+body.preview-terminal-fullscreen-open,
+body.terminal-fullscreen-open {
   overflow: hidden;
 }
 
@@ -793,6 +802,11 @@ body.preview-terminal-fullscreen-open {
 .copy-button:focus-visible {
   background: #edf2ef;
   outline: none;
+}
+
+.copy-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
 }
 
 .snippet-block {

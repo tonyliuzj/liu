@@ -6,7 +6,7 @@ Static documentation page for JavaScript window design patterns. The page opens 
 
 - `WindowIframe` React component for `src/pages/index.js`.
 - Status and monitor `WindowIframe` usage sections.
-- Plain JavaScript terminal scripts to paste before `</body>`.
+- Feature-rich `terminal.js` shell with DNS tools, virtual files, history, autocomplete, and async command handling.
 - Live iframe window preview and terminal window preview.
 - Terminal logic notes for prompt state, window state, command dispatch, and keyboard control.
 - Contact link to `https://tony-liu.com`.
@@ -15,6 +15,7 @@ Static documentation page for JavaScript window design patterns. The page opens 
 
 - `index.html` stores the source snippets as hidden raw text and loads the docs shell.
 - `script.js` renders the documentation UI and code-copy buttons.
+- `terminal.js` powers the live terminal preview and can be reused as the standalone terminal implementation.
 - `styles.css` contains the responsive documentation layout.
 - `CNAME` configures the custom domain for GitHub Pages.
 

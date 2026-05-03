@@ -28,24 +28,24 @@ const iframePreviews = [
 
 const terminalLogic = [
   {
-    title: "Prompt State",
+    title: "Shell State",
     description:
-      "The terminal keeps a home directory, current directory, compact path label, command history, and history cursor in JavaScript state."
+      "Tracks cwd, prompt label, history, environment variables, active run ids, and read-only state while async commands are running."
   },
   {
-    title: "Window State",
+    title: "Virtual Files",
     description:
-      "Close, minimize, restore, and fullscreen are class toggles on the terminal window plus a body class for fullscreen scroll locking."
+      "Includes a small in-memory filesystem so ls, cd, cat, head, tail, stat, env, export, history, and clear behave like shell commands."
   },
   {
-    title: "Command Dispatch",
+    title: "DNS Tools",
     description:
-      "Commands are normalized from input, echoed into output, looked up in a command map, and rendered as terminal lines with status styling."
+      "Implements dig, nslookup, host, trace, zone, whois, ping, curl, myip, and privacy with DNS-over-HTTPS plus local fallback records."
   },
   {
     title: "Keyboard Control",
     description:
-      "Enter runs a command, arrow keys move through history, Ctrl+L clears output, and clicking command chips runs predefined commands."
+      "Enter runs commands, arrows navigate history, Tab completes command names, Ctrl+L clears output, and Ctrl+C interrupts async work."
   }
 ];
 
@@ -74,15 +74,12 @@ const snippetGroups = [
   },
   {
     id: "terminal",
-    kicker: "before </body>",
+    kicker: "terminal.js",
     title: "Implement the terminal window JavaScript",
     summary:
-      "Paste these script blocks before the closing body tag on the page that contains the terminal markup. They manage prompt state, window controls, commands, history, and focus.",
+      "Use terminal.js as a standalone script or paste it inside an existing script block after the terminal markup. It manages shell state, virtual files, DNS utilities, async command handling, autocomplete, history, and window controls.",
     snippets: [
-      ["Terminal state", "before </body>", "snippet-terminal-state"],
-      ["Window controls", "before </body>", "snippet-terminal-window"],
-      ["Command runner", "before </body>", "snippet-terminal-commands"],
-      ["Keyboard and command buttons", "before </body>", "snippet-terminal-keyboard"]
+      ["Feature terminal script", "terminal.js", "file:terminal.js"]
     ]
   }
 ];
@@ -105,6 +102,16 @@ function createElement(tag, options = {}) {
 function getSnippet(id) {
   const snippet = document.getElementById(id);
   return snippet ? snippet.value.trim() : "";
+}
+
+async function getSnippetSource(id) {
+  if (id.startsWith("file:")) {
+    const response = await fetch(id.slice(5), { cache: "no-store" });
+    if (!response.ok) throw new Error(`Unable to load ${id.slice(5)}`);
+    return response.text();
+  }
+
+  return getSnippet(id);
 }
 
 function buildHeader() {
@@ -279,15 +286,30 @@ function buildWindowPreview({ src, title, footerLabel, footerHref }) {
 function buildTerminalPreview() {
   const shell = createElement("article", { className: "terminal-preview-shell" });
   const label = createElement("div", { className: "preview-label" });
-  const terminal = createElement("div", { className: "terminal-window-preview" });
+  const terminal = createElement("div", { className: "terminal-window terminal-window-preview" });
   const toolbar = createElement("div", { className: "terminal-toolbar" });
   const controls = createElement("div", { className: "terminal-controls" });
-  const path = createElement("span", { className: "terminal-path", text: "~" });
-  const body = createElement("div", { className: "terminal-body-preview" });
-  const output = createElement("div", { className: "terminal-output" });
+  const path = createElement("span", {
+    className: "terminal-path",
+    text: "~",
+    id: "screen-path"
+  });
+  const body = createElement("div", {
+    className: "terminal-body-preview",
+    id: "terminal-body"
+  });
+  const output = createElement("div", {
+    className: "terminal-output",
+    id: "output"
+  });
   const promptRow = createElement("label", { className: "terminal-prompt-row" });
-  const prompt = createElement("span", { className: "prompt", text: "visitor@nameserver ~ %" });
+  const prompt = createElement("span", {
+    className: "prompt",
+    text: "visitor@nameserver ~ %",
+    id: "prompt"
+  });
   const input = createElement("input", {
+    id: "cmd-input",
     attributes: {
       type: "text",
       spellcheck: "false",
@@ -299,7 +321,7 @@ function buildTerminalPreview() {
   const wakeButton = createElement("button", {
     className: "terminal-wake",
     text: "Restore terminal",
-    attributes: { type: "button", hidden: "" }
+    attributes: { type: "button", hidden: "", "data-window-action": "restore" }
   });
 
   [
@@ -310,200 +332,20 @@ function buildTerminalPreview() {
     controls.append(
       createElement("button", {
         className: `terminal-control ${className}`,
-        attributes: { type: "button", "aria-label": label, "data-preview-window-action": action }
+        attributes: { type: "button", "aria-label": label, "data-window-action": action }
       })
     );
   });
 
-  ["help", "status", "records", "clear"].forEach((command) => {
+  ["help", "ls", "dig nameserver.ing ANY", "zone nameserver.ing", "privacy", "clear"].forEach((command) => {
     commandBar.append(
       createElement("button", {
         className: "terminal-command-button",
         text: command,
-        attributes: { type: "button", "data-preview-command": command }
+        attributes: { type: "button", "data-command": command }
       })
     );
   });
-
-  const homeDirectory = "/home/visitor";
-  let currentDirectory = homeDirectory;
-  let history = [];
-  let historyIndex = 0;
-
-  const commands = {
-    help: [
-      "Available commands:",
-      "  help       Show commands",
-      "  clear      Clear terminal",
-      "  status     Show system status",
-      "  records    List DNS record types"
-    ],
-    status: [
-      "Shell Status",
-      "Host: nameserver",
-      "User: visitor",
-      "Live DNS: enabled",
-      "Window controls: active"
-    ],
-    records: [
-      "A      IPv4 address",
-      "AAAA   IPv6 address",
-      "CNAME  Alias record",
-      "MX     Mail exchanger",
-      "NS     Nameserver",
-      "SOA    Start of authority",
-      "TXT    Text record"
-    ]
-  };
-
-  function compactPath(value) {
-    if (value === homeDirectory) return "~";
-    if (value.startsWith(`${homeDirectory}/`)) return `~${value.slice(homeDirectory.length)}`;
-    return value;
-  }
-
-  function updatePrompt() {
-    const compact = compactPath(currentDirectory);
-    prompt.textContent = `visitor@nameserver ${compact} %`;
-    path.textContent = compact;
-  }
-
-  function scrollToBottom() {
-    body.scrollTop = body.scrollHeight;
-  }
-
-  function appendLine(text = "", className = "") {
-    const line = createElement("div", {
-      className: className ? `terminal-line ${className}` : "terminal-line",
-      text
-    });
-    output.append(line);
-    scrollToBottom();
-  }
-
-  function echoCommand(command) {
-    const line = createElement("div", { className: "terminal-line echo system" });
-    line.append(createElement("span", { className: "prompt", text: prompt.textContent }), createElement("span", { text: command }));
-    output.append(line);
-  }
-
-  function runCommand(rawCommand) {
-    const command = rawCommand.trim();
-    if (!command) return;
-
-    echoCommand(command);
-    history.push(command);
-    historyIndex = history.length;
-
-    if (command === "clear") {
-      output.innerHTML = "";
-      return;
-    }
-
-    const result = commands[command];
-
-    if (!result) {
-      appendLine(`nameserver-sh: command not found: ${command}`, "error");
-      appendLine("Try: help", "dim");
-      appendLine();
-      return;
-    }
-
-    result.forEach((line, index) => appendLine(line, index === 0 ? "accent" : ""));
-    appendLine();
-  }
-
-  function syncShellState() {
-    shell.classList.toggle("is-minimized", terminal.classList.contains("is-minimized"));
-    shell.classList.toggle("is-closed", terminal.classList.contains("is-closed"));
-    shell.classList.toggle("is-fullscreen", terminal.classList.contains("is-fullscreen"));
-  }
-
-  function setTerminalFullscreen(isFullscreen) {
-    terminal.classList.remove("is-closed", "is-minimized");
-    terminal.classList.toggle("is-fullscreen", isFullscreen);
-    document.body.classList.toggle("preview-terminal-fullscreen-open", isFullscreen);
-    wakeButton.hidden = true;
-    syncShellState();
-    scrollToBottom();
-  }
-
-  function restoreTerminal() {
-    terminal.classList.remove("is-closed", "is-minimized", "is-fullscreen");
-    document.body.classList.remove("preview-terminal-fullscreen-open");
-    wakeButton.hidden = true;
-    syncShellState();
-    input.focus();
-  }
-
-  function toggleTerminalMinimized() {
-    const minimized = !terminal.classList.contains("is-minimized");
-    terminal.classList.remove("is-closed", "is-fullscreen");
-    terminal.classList.toggle("is-minimized", minimized);
-    document.body.classList.remove("preview-terminal-fullscreen-open");
-    wakeButton.hidden = true;
-    syncShellState();
-  }
-
-  function closeTerminalWindow() {
-    terminal.classList.remove("is-fullscreen", "is-minimized");
-    terminal.classList.add("is-closed");
-    document.body.classList.remove("preview-terminal-fullscreen-open");
-    wakeButton.hidden = false;
-    syncShellState();
-  }
-
-  controls.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-preview-window-action]");
-    if (!button) return;
-
-    const action = button.dataset.previewWindowAction;
-    if (action === "fullscreen") setTerminalFullscreen(!terminal.classList.contains("is-fullscreen"));
-    if (action === "minimize") toggleTerminalMinimized();
-    if (action === "close") closeTerminalWindow();
-  });
-
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      const command = input.value;
-      input.value = "";
-      runCommand(command);
-    }
-
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      if (historyIndex > 0) {
-        historyIndex -= 1;
-        input.value = history[historyIndex];
-      }
-    }
-
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      if (historyIndex < history.length - 1) {
-        historyIndex += 1;
-        input.value = history[historyIndex];
-      } else {
-        historyIndex = history.length;
-        input.value = "";
-      }
-    }
-
-    if (event.ctrlKey && event.key.toLowerCase() === "l") {
-      event.preventDefault();
-      output.innerHTML = "";
-    }
-  });
-
-  commandBar.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-preview-command]");
-    if (!button) return;
-    restoreTerminal();
-    runCommand(button.dataset.previewCommand);
-  });
-
-  body.addEventListener("click", () => input.focus());
-  wakeButton.addEventListener("click", restoreTerminal);
 
   label.append(createElement("span", { text: "Terminal preview" }), createElement("strong", { text: "Nameserver shell" }));
   toolbar.append(controls, path);
@@ -511,11 +353,6 @@ function buildTerminalPreview() {
   body.append(output, promptRow);
   terminal.append(toolbar, body, commandBar);
   shell.append(label, terminal, wakeButton);
-
-  updatePrompt();
-  appendLine(`${project.name} terminal preview`, "accent");
-  appendLine("Try: help, status, records", "dim");
-  appendLine();
 
   return shell;
 }
@@ -579,19 +416,33 @@ function buildCodeBlock(label, path, snippetId) {
   const card = createElement("article", { className: "doc-card" });
   const toolbar = createElement("div", { className: "code-toolbar" });
   const title = createElement("div", { className: "code-title" });
-  const snippet = getSnippet(snippetId);
+  let snippet = getSnippet(snippetId);
   const copyButton = createElement("button", {
     className: "copy-button",
     text: "Copy",
     attributes: { type: "button" }
   });
   const pre = createElement("pre", { className: "snippet-block" });
-  const code = createElement("code", { text: snippet });
+  const code = createElement("code", { text: snippet || "Loading..." });
 
   title.append(createElement("strong", { text: label }), createElement("span", { text: path }));
   toolbar.append(title, copyButton);
   pre.append(code);
   card.append(toolbar, pre);
+
+  if (snippetId.startsWith("file:")) {
+    copyButton.disabled = true;
+    getSnippetSource(snippetId)
+      .then((source) => {
+        snippet = source.trim();
+        code.textContent = snippet;
+        copyButton.disabled = false;
+      })
+      .catch((error) => {
+        snippet = "";
+        code.textContent = error.message;
+      });
+  }
 
   copyButton.addEventListener("click", async () => {
     try {
