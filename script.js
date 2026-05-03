@@ -9,7 +9,7 @@ const project = {
     ["React", "#react"],
     ["Usage", "#usage"],
     ["Terminal", "#terminal"],
-    ["Backlink", "#backlink"]
+    ["Contact", "#contact"]
   ]
 };
 
@@ -191,6 +191,7 @@ function buildSectionHeading(kicker, title, summary) {
 
 function buildWindowPreview({ src, title, footerLabel, footerHref }) {
   const card = createElement("article", { className: "preview-window" });
+  const label = createElement("div", { className: "preview-label" });
   const toolbar = createElement("div", { className: "preview-window-toolbar" });
   const dots = createElement("div", { className: "preview-window-dots" });
   const address = createElement("div", { className: "preview-address", text: src });
@@ -218,6 +219,8 @@ function buildWindowPreview({ src, title, footerLabel, footerHref }) {
     }
   });
   const footer = createElement("div", { className: "preview-window-footer" });
+
+  label.append(createElement("span", { text: "Iframe preview" }), createElement("strong", { text: title }));
 
   ["red", "yellow", "green"].forEach((color) => {
     dots.append(createElement("span", { className: `dot ${color}` }));
@@ -248,12 +251,13 @@ function buildWindowPreview({ src, title, footerLabel, footerHref }) {
   footer.append(footerText);
   toolbar.append(dots, address, reloadButton, openLink);
   viewport.append(overlay, iframe);
-  card.append(toolbar, viewport, footer);
+  card.append(label, toolbar, viewport, footer);
   return card;
 }
 
 function buildTerminalPreview() {
   const shell = createElement("article", { className: "terminal-preview-shell" });
+  const label = createElement("div", { className: "preview-label" });
   const terminal = createElement("div", { className: "terminal-window-preview" });
   const toolbar = createElement("div", { className: "terminal-toolbar" });
   const controls = createElement("div", { className: "terminal-controls" });
@@ -470,11 +474,12 @@ function buildTerminalPreview() {
   body.addEventListener("click", () => input.focus());
   wakeButton.addEventListener("click", restoreTerminal);
 
+  label.append(createElement("span", { text: "Terminal preview" }), createElement("strong", { text: "Nameserver shell" }));
   toolbar.append(controls, path);
   promptRow.append(prompt, input);
   body.append(output, promptRow);
   terminal.append(toolbar, body, commandBar);
-  shell.append(terminal, wakeButton);
+  shell.append(label, terminal, wakeButton);
 
   updatePrompt();
   appendLine(`${project.domainLabel} terminal preview`, "accent");
@@ -488,13 +493,12 @@ function buildPreviewSection() {
   const section = createElement("section", { className: "section preview-section", id: "preview" });
   const inner = createElement("div", { className: "section-inner" });
   const previewGrid = createElement("div", { className: "preview-grid" });
-  const iframeStack = createElement("div", { className: "preview-stack" });
+  const primaryPreview = buildWindowPreview(iframePreviews[0]);
+  const sideRail = createElement("div", { className: "preview-side-rail" });
 
-  iframePreviews.forEach((preview) => {
-    iframeStack.append(buildWindowPreview(preview));
-  });
-
-  previewGrid.append(iframeStack, buildTerminalPreview());
+  primaryPreview.classList.add("is-primary");
+  sideRail.append(buildWindowPreview(iframePreviews[1]), buildTerminalPreview());
+  previewGrid.append(primaryPreview, sideRail);
   inner.append(
     buildSectionHeading(
       "Example preview",
@@ -557,24 +561,24 @@ function buildSnippetSection(group, index) {
   return section;
 }
 
-function buildBacklinkSection() {
-  const section = createElement("section", { className: "section", id: "backlink" });
+function buildContactSection() {
+  const section = createElement("section", { className: "section", id: "contact" });
   const inner = createElement("div", { className: "section-inner" });
-  const panel = createElement("div", { className: "backlink-panel" });
+  const panel = createElement("div", { className: "contact-panel" });
   const copy = createElement("div");
-  const actions = createElement("div", { className: "backlink-actions" });
+  const actions = createElement("div", { className: "contact-actions" });
 
   copy.append(
-    createElement("p", { className: "section-kicker", text: "Backlink" }),
-    createElement("h2", { text: "Maintainer website." }),
+    createElement("p", { className: "section-kicker", text: "Contact" }),
+    createElement("h2", { text: "Maintainer contact." }),
     createElement("p", {
-      text: "This documentation page stays focused on the JavaScript and React design blocks published at liu.js.org. The maintainer backlink is included here."
+      text: "This documentation page stays focused on the JavaScript and React design blocks published at liu.js.org. For related work and contact details, use the maintainer site."
     })
   );
 
   actions.append(
     createElement("a", {
-      className: "backlink-link",
+      className: "contact-link",
       attributes: {
         href: project.maintainerSite,
         target: "_blank",
@@ -596,7 +600,7 @@ function buildBacklinkSection() {
 function buildFooter() {
   const footer = createElement("footer", { className: "site-footer" });
   const inner = createElement("div", { className: "footer-inner" });
-  const backlink = createElement("a", {
+  const contactLink = createElement("a", {
     text: "tony-liu.com",
     attributes: { href: project.maintainerSite, target: "_blank", rel: "noreferrer" }
   });
@@ -605,7 +609,7 @@ function buildFooter() {
     createElement("span", { text: `© ${new Date().getFullYear()} ${project.name}` }),
     createElement("span", { text: "Maintainer: " })
   );
-  inner.lastElementChild.append(backlink);
+  inner.lastElementChild.append(contactLink);
   footer.append(inner);
   return footer;
 }
@@ -615,7 +619,7 @@ function renderApp() {
   const shell = createElement("div", { className: "site-shell" });
   const main = createElement("main");
 
-  main.append(buildHero(), buildPreviewSection(), ...snippetGroups.map(buildSnippetSection), buildBacklinkSection());
+  main.append(buildHero(), buildPreviewSection(), ...snippetGroups.map(buildSnippetSection), buildContactSection());
   shell.append(buildHeader(), main, buildFooter());
   app.append(shell);
 }

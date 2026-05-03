@@ -321,24 +321,54 @@ textarea {
 
 .preview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.72fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.62fr);
+  gap: 22px;
   align-items: start;
 }
 
-.preview-stack {
+.preview-side-rail {
   display: grid;
-  gap: 20px;
+  gap: 18px;
 }
 
 .preview-window,
-.terminal-window-preview {
+.terminal-window-preview,
+.terminal-preview-shell {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: #111318;
   color: #ffffff;
   box-shadow: var(--shadow);
+}
+
+.preview-window {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px 14px;
+}
+
+.preview-label span {
+  color: #8d96a8;
+  font-size: 0.76rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.preview-label strong {
+  overflow: hidden;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .preview-window-toolbar {
@@ -424,9 +454,14 @@ textarea {
 
 .preview-iframe-viewport {
   position: relative;
-  height: min(62vh, 520px);
-  min-height: 360px;
+  height: min(56vh, 470px);
+  min-height: 300px;
   background: rgba(0, 0, 0, 0.35);
+}
+
+.preview-window.is-primary .preview-iframe-viewport {
+  height: min(72vh, 660px);
+  min-height: 500px;
 }
 
 .preview-iframe-viewport iframe {
@@ -495,13 +530,17 @@ textarea {
 }
 
 .terminal-preview-shell {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 .terminal-window-preview {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .terminal-toolbar {
@@ -525,8 +564,8 @@ textarea {
 }
 
 .terminal-body-preview {
-  min-height: 360px;
-  max-height: 520px;
+  min-height: 290px;
+  max-height: 420px;
   overflow: auto;
   background: #090b0f;
   color: #d7dee8;
@@ -916,7 +955,7 @@ body.preview-terminal-fullscreen-open {
   color: var(--muted);
 }
 
-.backlink-panel {
+.contact-panel {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(260px, 0.36fr);
   gap: 40px;
@@ -928,29 +967,29 @@ body.preview-terminal-fullscreen-open {
   padding: 42px;
 }
 
-.backlink-panel h2 {
+.contact-panel h2 {
   margin: 0;
   font-size: 2.35rem;
   line-height: 1.1;
 }
 
-.backlink-panel p {
+.contact-panel p {
   margin: 16px 0 0;
   color: rgba(255, 255, 255, 0.72);
   font-size: 1.06rem;
 }
 
-.backlink-panel .section-kicker {
+.contact-panel .section-kicker {
   margin-top: 0;
   color: rgba(255, 255, 255, 0.68);
 }
 
-.backlink-actions {
+.contact-actions {
   display: grid;
   gap: 12px;
 }
 
-.backlink-link {
+.contact-link {
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -963,8 +1002,8 @@ body.preview-terminal-fullscreen-open {
   text-decoration: none;
 }
 
-.backlink-link:hover,
-.backlink-link:focus-visible {
+.contact-link:hover,
+.contact-link:focus-visible {
   background: rgba(255, 255, 255, 0.1);
   outline: none;
 }
@@ -1033,7 +1072,7 @@ body.preview-terminal-fullscreen-open {
   .section-heading,
   .preview-grid,
   .examples-layout,
-  .backlink-panel {
+  .contact-panel {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -1051,6 +1090,10 @@ body.preview-terminal-fullscreen-open {
   .preview-iframe-viewport,
   .terminal-body-preview {
     min-height: 320px;
+  }
+
+  .preview-window.is-primary .preview-iframe-viewport {
+    min-height: 420px;
   }
 }
 
@@ -1083,7 +1126,7 @@ body.preview-terminal-fullscreen-open {
   }
 
   .section-title,
-  .backlink-panel h2 {
+  .contact-panel h2 {
     font-size: 1.95rem;
   }
 
@@ -1099,6 +1142,10 @@ body.preview-terminal-fullscreen-open {
   .preview-iframe-viewport,
   .terminal-body-preview {
     min-height: 280px;
+  }
+
+  .preview-window.is-primary .preview-iframe-viewport {
+    min-height: 340px;
   }
 
   .terminal-line.echo {
@@ -1128,7 +1175,7 @@ body.preview-terminal-fullscreen-open {
     width: 100%;
   }
 
-  .backlink-panel {
+  .contact-panel {
     padding: 28px;
   }
 
