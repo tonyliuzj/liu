@@ -1,12 +1,13 @@
 # Liu.js
 
-Static documentation page for Liu.js open source design blocks.
+Static documentation page for Liu.js open source design blocks. The page opens with live examples, then provides implementation snippets.
 
 ## Documented Blocks
 
 - `WindowIframe` React component for `src/pages/index.js`.
 - Status and monitor `WindowIframe` usage sections.
 - Plain JavaScript terminal scripts to paste before `</body>`.
+- Live preview of the iframe window and terminal behaviors.
 - Maintainer backlink to `https://tony-liu.com`.
 
 ## Files

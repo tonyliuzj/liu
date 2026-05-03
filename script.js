@@ -2,8 +2,9 @@ const project = {
   name: "Liu.js",
   maintainerSite: "https://tony-liu.com",
   intro:
-    "Documentation for the open source design blocks used by Liu.js: a React iframe window component and plain JavaScript terminal controls.",
+    "Live previews and implementation notes for the open source design blocks used by Liu.js: a React iframe window component and plain JavaScript terminal controls.",
   nav: [
+    ["Preview", "#preview"],
     ["React", "#react"],
     ["Usage", "#usage"],
     ["Terminal", "#terminal"],
@@ -11,11 +12,26 @@ const project = {
   ]
 };
 
+const iframePreviews = [
+  {
+    src: "https://statusno.de/",
+    title: "System Status",
+    footerLabel: "KumaView",
+    footerHref: "https://github.com/tonyliuzj/kumaview"
+  },
+  {
+    src: "https://monitorno.de",
+    title: "Monitor",
+    footerLabel: "PocketView",
+    footerHref: "https://github.com/tonyliuzj/pocketview"
+  }
+];
+
 const snippetGroups = [
   {
     id: "react",
     kicker: "src/pages/index.js",
-    title: "React iframe window block",
+    title: "Implement the React iframe window block",
     summary:
       "Add the lucide-react import and WindowIframe component to src/pages/index.js. The component wraps an iframe in a browser-window frame with reload, external-open, and click-to-interact behavior.",
     snippets: [
@@ -26,7 +42,7 @@ const snippetGroups = [
   {
     id: "usage",
     kicker: "src/pages/index.js",
-    title: "Status and monitor sections",
+    title: "Implement the status and monitor sections",
     summary:
       "Use WindowIframe for the status and monitor embeds. Each footer links to the related open source project named in the snippet.",
     snippets: [
@@ -37,7 +53,7 @@ const snippetGroups = [
   {
     id: "terminal",
     kicker: "before </body>",
-    title: "Terminal window JavaScript",
+    title: "Implement the terminal window JavaScript",
     summary:
       "Paste these script blocks before the closing body tag on the page that contains the terminal markup. They manage prompt state, window controls, commands, history, and focus.",
     snippets: [
@@ -146,13 +162,13 @@ function buildHero() {
   actions.append(
     createElement("a", {
       className: "button primary",
-      text: "React Block",
-      attributes: { href: "#react" }
+      text: "View Preview",
+      attributes: { href: "#preview" }
     }),
     createElement("a", {
       className: "button secondary",
-      text: "Terminal Scripts",
-      attributes: { href: "#terminal" }
+      text: "Implementation Docs",
+      attributes: { href: "#usage" }
     })
   );
   copy.append(actions);
@@ -170,6 +186,324 @@ function buildSectionHeading(kicker, title, summary) {
   );
   heading.append(titleWrap, createElement("p", { className: "section-summary", text: summary }));
   return heading;
+}
+
+function buildWindowPreview({ src, title, footerLabel, footerHref }) {
+  const card = createElement("article", { className: "preview-window" });
+  const toolbar = createElement("div", { className: "preview-window-toolbar" });
+  const dots = createElement("div", { className: "preview-window-dots" });
+  const address = createElement("div", { className: "preview-address", text: src });
+  const reloadButton = createElement("button", {
+    className: "preview-icon-button",
+    text: "↻",
+    attributes: { type: "button", "aria-label": `Reload ${title}` }
+  });
+  const openLink = createElement("a", {
+    className: "preview-icon-button",
+    text: "↗",
+    attributes: { href: src, target: "_blank", rel: "noreferrer", "aria-label": `Open ${title}` }
+  });
+  const viewport = createElement("div", { className: "preview-iframe-viewport" });
+  const overlay = createElement("button", {
+    className: "preview-overlay",
+    text: "Click to interact",
+    attributes: { type: "button" }
+  });
+  const iframe = createElement("iframe", {
+    attributes: {
+      src,
+      title,
+      sandbox: "allow-forms allow-same-origin allow-scripts"
+    }
+  });
+  const footer = createElement("div", { className: "preview-window-footer" });
+
+  ["red", "yellow", "green"].forEach((color) => {
+    dots.append(createElement("span", { className: `dot ${color}` }));
+  });
+
+  reloadButton.addEventListener("click", () => {
+    iframe.src = "about:blank";
+    window.requestAnimationFrame(() => {
+      iframe.src = src;
+    });
+  });
+
+  overlay.addEventListener("click", () => {
+    viewport.classList.add("is-interacting");
+  });
+
+  viewport.addEventListener("mouseleave", () => {
+    viewport.classList.remove("is-interacting");
+  });
+
+  const footerText = createElement("span", { text: "Powered by " });
+  const footerLink = createElement("a", {
+    text: footerLabel,
+    attributes: { href: footerHref, target: "_blank", rel: "noreferrer" }
+  });
+
+  footerText.append(footerLink);
+  footer.append(footerText);
+  toolbar.append(dots, address, reloadButton, openLink);
+  viewport.append(overlay, iframe);
+  card.append(toolbar, viewport, footer);
+  return card;
+}
+
+function buildTerminalPreview() {
+  const shell = createElement("article", { className: "terminal-preview-shell" });
+  const terminal = createElement("div", { className: "terminal-window-preview" });
+  const toolbar = createElement("div", { className: "terminal-toolbar" });
+  const controls = createElement("div", { className: "terminal-controls" });
+  const path = createElement("span", { className: "terminal-path", text: "~" });
+  const body = createElement("div", { className: "terminal-body-preview" });
+  const output = createElement("div", { className: "terminal-output" });
+  const promptRow = createElement("label", { className: "terminal-prompt-row" });
+  const prompt = createElement("span", { className: "prompt", text: "visitor@nameserver ~ %" });
+  const input = createElement("input", {
+    attributes: {
+      type: "text",
+      spellcheck: "false",
+      autocomplete: "off",
+      "aria-label": "Terminal command"
+    }
+  });
+  const commandBar = createElement("div", { className: "terminal-command-bar" });
+  const wakeButton = createElement("button", {
+    className: "terminal-wake",
+    text: "Restore terminal",
+    attributes: { type: "button", hidden: "" }
+  });
+
+  [
+    ["close", "Close terminal", "close"],
+    ["minimize", "Minimize terminal", "minimize"],
+    ["fullscreen", "Toggle fullscreen terminal", "fullscreen"]
+  ].forEach(([className, label, action]) => {
+    controls.append(
+      createElement("button", {
+        className: `terminal-control ${className}`,
+        attributes: { type: "button", "aria-label": label, "data-preview-window-action": action }
+      })
+    );
+  });
+
+  ["help", "status", "records", "clear"].forEach((command) => {
+    commandBar.append(
+      createElement("button", {
+        className: "terminal-command-button",
+        text: command,
+        attributes: { type: "button", "data-preview-command": command }
+      })
+    );
+  });
+
+  const homeDirectory = "/home/visitor";
+  let currentDirectory = homeDirectory;
+  let history = [];
+  let historyIndex = 0;
+
+  const commands = {
+    help: [
+      "Available commands:",
+      "  help       Show commands",
+      "  clear      Clear terminal",
+      "  status     Show system status",
+      "  records    List DNS record types"
+    ],
+    status: [
+      "Shell Status",
+      "Host: nameserver",
+      "User: visitor",
+      "Live DNS: enabled",
+      "Window controls: active"
+    ],
+    records: [
+      "A      IPv4 address",
+      "AAAA   IPv6 address",
+      "CNAME  Alias record",
+      "MX     Mail exchanger",
+      "NS     Nameserver",
+      "SOA    Start of authority",
+      "TXT    Text record"
+    ]
+  };
+
+  function compactPath(value) {
+    if (value === homeDirectory) return "~";
+    if (value.startsWith(`${homeDirectory}/`)) return `~${value.slice(homeDirectory.length)}`;
+    return value;
+  }
+
+  function updatePrompt() {
+    const compact = compactPath(currentDirectory);
+    prompt.textContent = `visitor@nameserver ${compact} %`;
+    path.textContent = compact;
+  }
+
+  function scrollToBottom() {
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function appendLine(text = "", className = "") {
+    const line = createElement("div", {
+      className: className ? `terminal-line ${className}` : "terminal-line",
+      text
+    });
+    output.append(line);
+    scrollToBottom();
+  }
+
+  function echoCommand(command) {
+    const line = createElement("div", { className: "terminal-line echo system" });
+    line.append(createElement("span", { className: "prompt", text: prompt.textContent }), createElement("span", { text: command }));
+    output.append(line);
+  }
+
+  function runCommand(rawCommand) {
+    const command = rawCommand.trim();
+    if (!command) return;
+
+    echoCommand(command);
+    history.push(command);
+    historyIndex = history.length;
+
+    if (command === "clear") {
+      output.innerHTML = "";
+      return;
+    }
+
+    const result = commands[command];
+
+    if (!result) {
+      appendLine(`nameserver-sh: command not found: ${command}`, "error");
+      appendLine("Try: help", "dim");
+      appendLine();
+      return;
+    }
+
+    result.forEach((line, index) => appendLine(line, index === 0 ? "accent" : ""));
+    appendLine();
+  }
+
+  function setTerminalFullscreen(isFullscreen) {
+    terminal.classList.remove("is-closed", "is-minimized");
+    terminal.classList.toggle("is-fullscreen", isFullscreen);
+    document.body.classList.toggle("preview-terminal-fullscreen-open", isFullscreen);
+    wakeButton.hidden = true;
+    scrollToBottom();
+  }
+
+  function restoreTerminal() {
+    terminal.classList.remove("is-closed", "is-minimized", "is-fullscreen");
+    document.body.classList.remove("preview-terminal-fullscreen-open");
+    wakeButton.hidden = true;
+    input.focus();
+  }
+
+  function toggleTerminalMinimized() {
+    const minimized = !terminal.classList.contains("is-minimized");
+    terminal.classList.remove("is-closed", "is-fullscreen");
+    terminal.classList.toggle("is-minimized", minimized);
+    document.body.classList.remove("preview-terminal-fullscreen-open");
+    wakeButton.hidden = true;
+  }
+
+  function closeTerminalWindow() {
+    terminal.classList.remove("is-fullscreen", "is-minimized");
+    terminal.classList.add("is-closed");
+    document.body.classList.remove("preview-terminal-fullscreen-open");
+    wakeButton.hidden = false;
+  }
+
+  controls.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-preview-window-action]");
+    if (!button) return;
+
+    const action = button.dataset.previewWindowAction;
+    if (action === "fullscreen") setTerminalFullscreen(!terminal.classList.contains("is-fullscreen"));
+    if (action === "minimize") toggleTerminalMinimized();
+    if (action === "close") closeTerminalWindow();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      const command = input.value;
+      input.value = "";
+      runCommand(command);
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex -= 1;
+        input.value = history[historyIndex];
+      }
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (historyIndex < history.length - 1) {
+        historyIndex += 1;
+        input.value = history[historyIndex];
+      } else {
+        historyIndex = history.length;
+        input.value = "";
+      }
+    }
+
+    if (event.ctrlKey && event.key.toLowerCase() === "l") {
+      event.preventDefault();
+      output.innerHTML = "";
+    }
+  });
+
+  commandBar.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-preview-command]");
+    if (!button) return;
+    restoreTerminal();
+    runCommand(button.dataset.previewCommand);
+  });
+
+  body.addEventListener("click", () => input.focus());
+  wakeButton.addEventListener("click", restoreTerminal);
+
+  toolbar.append(controls, path);
+  promptRow.append(prompt, input);
+  body.append(output, promptRow);
+  terminal.append(toolbar, body, commandBar);
+  shell.append(terminal, wakeButton);
+
+  updatePrompt();
+  appendLine("Liu.js terminal preview", "accent");
+  appendLine("Try: help, status, records", "dim");
+  appendLine();
+
+  return shell;
+}
+
+function buildPreviewSection() {
+  const section = createElement("section", { className: "section preview-section", id: "preview" });
+  const inner = createElement("div", { className: "section-inner" });
+  const previewGrid = createElement("div", { className: "preview-grid" });
+  const iframeStack = createElement("div", { className: "preview-stack" });
+
+  iframePreviews.forEach((preview) => {
+    iframeStack.append(buildWindowPreview(preview));
+  });
+
+  previewGrid.append(iframeStack, buildTerminalPreview());
+  inner.append(
+    buildSectionHeading(
+      "Example preview",
+      "See the components first, then copy the implementation.",
+      "The iframe cards preview the browser-window wrapper, reload control, external-open action, click-to-interact overlay, and project footer. The terminal preview exercises the provided command and window-control behavior."
+    ),
+    previewGrid
+  );
+  section.append(inner);
+  return section;
 }
 
 function buildCodeBlock(label, path, snippetId) {
@@ -280,7 +614,7 @@ function renderApp() {
   const shell = createElement("div", { className: "site-shell" });
   const main = createElement("main");
 
-  main.append(buildHero(), ...snippetGroups.map(buildSnippetSection), buildBacklinkSection());
+  main.append(buildHero(), buildPreviewSection(), ...snippetGroups.map(buildSnippetSection), buildBacklinkSection());
   shell.append(buildHeader(), main, buildFooter());
   app.append(shell);
 }
