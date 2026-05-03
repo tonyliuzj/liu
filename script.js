@@ -1,63 +1,121 @@
-const profile = {
-  name: "Liu",
-  website: "https://tony-liu.com",
-  intro: "Product-minded frontend work with clean systems, sharp interactions, and interfaces that feel ready for real people.",
-  about:
-    "Liu is a compact portfolio for digital product work: clear visual systems, responsive frontend builds, and practical product thinking shaped around the details users notice.",
+const project = {
+  name: "Liu.js",
+  maintainerSite: "https://tony-liu.com",
+  sourceUrl: "https://github.com/tonyliuzj/liu",
+  moduleUrl: "liu.js",
+  intro:
+    "A browser-first JavaScript utility kit for small static sites and UI experiments. It documents focused helpers for URL state, delegated events, async flow control, and DOM rendering without a framework.",
+  overview:
+    "Liu.js is intentionally small: plain ESM, no build step, and no runtime dependencies. The helpers are designed for modern browser projects that need practical JavaScript glue without adopting a larger framework.",
   stats: [
-    ["08", "Selected product and web concepts"],
-    ["04", "Core disciplines across UI, frontend, motion, and systems"],
-    ["01", "Simple static site ready for GitHub Pages"]
+    ["0", "runtime dependencies"],
+    ["ESM", "native browser module format"],
+    ["4", "documented utility areas"]
   ],
   nav: [
-    ["Work", "#work"],
-    ["Capabilities", "#capabilities"],
-    ["About", "#about"],
-    ["Contact", "#contact"]
+    ["Modules", "#modules"],
+    ["API", "#api"],
+    ["Examples", "#examples"],
+    ["Backlink", "#backlink"]
   ]
 };
 
-const projects = [
+const modules = [
   {
-    title: "Signal Desk",
-    description: "A compact analytics surface for teams that need status, decisions, and next moves in one scan.",
-    tags: ["Dashboard", "Design System", "Frontend"],
+    title: "URL State",
+    description:
+      "Read and update query parameters with URLSearchParams and history.replaceState so filters can be shared without reloading the page.",
+    tags: ["URLSearchParams", "History API", "State"],
     bg: "#e8efed",
     accent: "#126b64"
   },
   {
-    title: "Atlas Notes",
-    description: "A personal knowledge workspace with organized reading queues, project notes, and focused search.",
-    tags: ["Workspace", "Interaction", "Prototype"],
+    title: "Delegated Events",
+    description:
+      "Attach one listener to a container and route clicks, input changes, or custom events through selectors for dynamic DOM lists.",
+    tags: ["DOM", "Events", "Selectors"],
     bg: "#f1ece6",
     accent: "#c54e3f"
   },
   {
-    title: "Studio Index",
-    description: "A polished portfolio archive that gives case studies, experiments, and contact paths equal clarity.",
-    tags: ["Portfolio", "Content", "Responsive"],
+    title: "Async Tasks",
+    description:
+      "Keep only the newest search, preview, or validation request active with a tiny AbortController wrapper.",
+    tags: ["Promise", "AbortController", "Fetch"],
     bg: "#e7eaf1",
     accent: "#314f83"
   }
 ];
 
-const capabilities = [
+const apiItems = [
   {
-    title: "Interface Design",
-    description: "Structure, visual hierarchy, interaction states, and layout systems for product-facing screens."
+    title: "queryState(defaults)",
+    description:
+      "Creates a small reader and writer for query-string backed UI state. Values matching defaults are removed from the URL to keep links tidy.",
+    code: `import { queryState } from "./liu.js";
+
+const filters = queryState({ status: "open", page: "1" });
+const current = filters.get();
+
+filters.set({ status: "done", page: "1" });`
   },
   {
-    title: "Frontend Build",
-    description: "Accessible static pages and lightweight JavaScript that deploy cleanly without complex tooling."
+    title: "delegate(root, selector, type, handler)",
+    description:
+      "Handles events from current and future matching children through one parent listener, then returns a cleanup function.",
+    code: `import { delegate } from "./liu.js";
+
+const stop = delegate(list, "[data-action]", "click", (event, button) => {
+  event.preventDefault();
+  runAction(button.dataset.action);
+});`
   },
   {
-    title: "Product Polish",
-    description: "Microcopy, responsive behavior, and motion details that make a first visit feel considered."
+    title: "latestTask(worker)",
+    description:
+      "Wraps an async worker so each new run aborts the previous one. This is useful for search boxes, live previews, and validation.",
+    code: `import { latestTask } from "./liu.js";
+
+const search = latestTask((signal, term) => {
+  return fetch("/api/search?q=" + encodeURIComponent(term), { signal });
+});`
+  },
+  {
+    title: "renderList(container, items, renderItem)",
+    description:
+      "Builds a DocumentFragment and replaces a list in one DOM operation, keeping rendering clear and predictable.",
+    code: `import { renderList } from "./liu.js";
+
+renderList(results, items, (item) => {
+  const li = document.createElement("li");
+  li.textContent = item.title;
+  return li;
+});`
   }
 ];
 
-const contactLinks = [
-  ["Main Portfolio", profile.website]
+const examples = [
+  {
+    title: "Filter links that stay shareable",
+    description:
+      "Use queryState for status tabs, search terms, or pagination on static documentation pages where a server is not involved."
+  },
+  {
+    title: "Dynamic controls with one listener",
+    description:
+      "Use delegate when a list is re-rendered often and individual addEventListener calls would be repetitive or easy to leak."
+  },
+  {
+    title: "Live search without stale results",
+    description:
+      "Use latestTask to cancel older fetch calls when a user types quickly, then render only the response for the newest input."
+  }
+];
+
+const relatedLinks = [
+  ["Download ESM Module", project.moduleUrl],
+  ["Source Repository", project.sourceUrl],
+  ["Maintainer Backlink", project.maintainerSite]
 ];
 
 function createElement(tag, options = {}) {
@@ -66,7 +124,6 @@ function createElement(tag, options = {}) {
   if (options.className) element.className = options.className;
   if (options.id) element.id = options.id;
   if (options.text) element.textContent = options.text;
-  if (options.html) element.innerHTML = options.html;
   if (options.attributes) {
     Object.entries(options.attributes).forEach(([key, value]) => {
       element.setAttribute(key, value);
@@ -85,11 +142,11 @@ function buildHeader() {
 
   const brand = createElement("a", {
     className: "brand",
-    attributes: { href: "#top", "aria-label": `${profile.name} home` }
+    attributes: { href: "#top", "aria-label": `${project.name} home` }
   });
   brand.append(
-    createElement("span", { className: "brand-mark", text: profile.name.slice(0, 1) }),
-    createElement("span", { text: profile.name })
+    createElement("span", { className: "brand-mark", text: "JS" }),
+    createElement("span", { text: project.name })
   );
 
   const menuButton = createElement("button", {
@@ -103,7 +160,7 @@ function buildHeader() {
   menuButton.append(createElement("span", { attributes: { "aria-hidden": "true" } }));
 
   const links = createElement("div", { className: "nav-links" });
-  profile.nav.forEach(([label, href]) => {
+  project.nav.forEach(([label, href]) => {
     links.append(
       createElement("a", {
         className: "nav-link",
@@ -144,22 +201,22 @@ function buildHero() {
   const copy = createElement("div", { className: "hero-copy" });
 
   copy.append(
-    createElement("p", { className: "eyebrow", text: "Portfolio landing page" }),
-    createElement("h1", { text: profile.name }),
-    createElement("p", { className: "hero-text", text: profile.intro })
+    createElement("p", { className: "eyebrow", text: "JavaScript utility module" }),
+    createElement("h1", { text: project.name }),
+    createElement("p", { className: "hero-text", text: project.intro })
   );
 
   const actions = createElement("div", { className: "hero-actions" });
   actions.append(
     createElement("a", {
       className: "button primary",
-      text: "Visit Main Portfolio",
-      attributes: { href: profile.website, target: "_blank", rel: "noreferrer" }
+      text: "Read the API",
+      attributes: { href: "#api" }
     }),
     createElement("a", {
       className: "button secondary",
-      text: "tony-liu.com",
-      attributes: { href: profile.website, target: "_blank", rel: "noreferrer" }
+      text: "View Module",
+      attributes: { href: project.moduleUrl }
     })
   );
   copy.append(actions);
@@ -179,24 +236,24 @@ function buildSectionHeading(kicker, title, summary) {
   return heading;
 }
 
-function buildWorkSection() {
-  const section = createElement("section", { className: "section", id: "work" });
+function buildModulesSection() {
+  const section = createElement("section", { className: "section", id: "modules" });
   const inner = createElement("div", { className: "section-inner" });
-  const grid = createElement("div", { className: "work-grid" });
+  const grid = createElement("div", { className: "module-grid" });
 
-  projects.forEach((project) => {
-    const card = createElement("article", { className: "work-card" });
-    const visual = createElement("div", { className: "work-visual" });
-    visual.style.setProperty("--visual-bg", project.bg);
-    visual.style.setProperty("--visual-accent", project.accent);
+  modules.forEach((item) => {
+    const card = createElement("article", { className: "module-card" });
+    const visual = createElement("div", { className: "module-visual" });
+    visual.style.setProperty("--visual-bg", item.bg);
+    visual.style.setProperty("--visual-accent", item.accent);
 
-    const content = createElement("div", { className: "work-content" });
+    const content = createElement("div", { className: "module-content" });
     const tags = createElement("div", { className: "tag-list" });
-    project.tags.forEach((tag) => tags.append(createElement("span", { className: "tag", text: tag })));
+    item.tags.forEach((tag) => tags.append(createElement("span", { className: "tag", text: tag })));
 
     content.append(
-      createElement("h3", { text: project.title }),
-      createElement("p", { text: project.description }),
+      createElement("h3", { text: item.title }),
+      createElement("p", { text: item.description }),
       tags
     );
     card.append(visual, content);
@@ -205,9 +262,9 @@ function buildWorkSection() {
 
   inner.append(
     buildSectionHeading(
-      "Selected work",
-      "Focused pages, systems, and product surfaces.",
-      "A concise set of product directions showing information design, responsive craft, and polished presentation."
+      "Modules",
+      "Small helpers for browser JavaScript.",
+      "Each module maps to browser platform APIs that are already available in modern JavaScript runtimes."
     ),
     grid
   );
@@ -215,26 +272,31 @@ function buildWorkSection() {
   return section;
 }
 
-function buildCapabilitiesSection() {
-  const section = createElement("section", { className: "section alt", id: "capabilities" });
+function buildApiSection() {
+  const section = createElement("section", { className: "section alt", id: "api" });
   const inner = createElement("div", { className: "section-inner" });
-  const grid = createElement("div", { className: "capability-grid" });
+  const grid = createElement("div", { className: "api-grid" });
 
-  capabilities.forEach((item, index) => {
-    const card = createElement("article", { className: "capability" });
+  apiItems.forEach((item, index) => {
+    const card = createElement("article", { className: "api-card" });
+    const code = createElement("code", { text: item.code });
+    const pre = createElement("pre", { className: "code-block" });
+    pre.append(code);
+
     card.append(
       createElement("div", { className: "capability-index", text: String(index + 1).padStart(2, "0") }),
       createElement("h3", { text: item.title }),
-      createElement("p", { text: item.description })
+      createElement("p", { text: item.description }),
+      pre
     );
     grid.append(card);
   });
 
   inner.append(
     buildSectionHeading(
-      "Capabilities",
-      "A practical toolkit for polished web work.",
-      "The page is intentionally lightweight, so it stays fast on GitHub Pages and simple to maintain."
+      "API",
+      "Documented functions with copyable usage patterns.",
+      "The exported helpers are intentionally explicit so they can be read, copied, tested, and adapted in plain JavaScript projects."
     ),
     grid
   );
@@ -242,45 +304,66 @@ function buildCapabilitiesSection() {
   return section;
 }
 
-function buildAboutSection() {
-  const section = createElement("section", { className: "section", id: "about" });
-  const inner = createElement("div", { className: "section-inner about-layout" });
+function buildExamplesSection() {
+  const section = createElement("section", { className: "section", id: "examples" });
+  const inner = createElement("div", { className: "section-inner examples-layout" });
   const stats = createElement("div", { className: "stats" });
+  const list = createElement("div", { className: "example-list" });
 
-  profile.stats.forEach(([value, label]) => {
+  project.stats.forEach(([value, label]) => {
     const stat = createElement("div", { className: "stat" });
     stat.append(createElement("strong", { text: value }), createElement("span", { text: label }));
     stats.append(stat);
   });
 
-  inner.append(createElement("p", { className: "about-copy", text: profile.about }), stats);
+  examples.forEach((item) => {
+    const example = createElement("article", { className: "example-item" });
+    example.append(createElement("h3", { text: item.title }), createElement("p", { text: item.description }));
+    list.append(example);
+  });
+
+  const copy = createElement("div");
+  copy.append(
+    createElement("p", { className: "about-copy", text: project.overview }),
+    list
+  );
+
+  inner.append(copy, stats);
   section.append(inner);
   return section;
 }
 
-function buildContactSection() {
-  const section = createElement("section", { className: "section", id: "contact" });
+function buildBacklinkSection() {
+  const section = createElement("section", { className: "section", id: "backlink" });
   const inner = createElement("div", { className: "section-inner" });
-  const panel = createElement("div", { className: "contact-panel" });
+  const panel = createElement("div", { className: "backlink-panel" });
   const copy = createElement("div");
-  const actions = createElement("div", { className: "contact-actions" });
+  const actions = createElement("div", { className: "backlink-actions" });
 
   copy.append(
-    createElement("p", { className: "section-kicker", text: "Contact" }),
-    createElement("h2", { text: "Ready for the next portfolio piece." }),
+    createElement("p", { className: "section-kicker", text: "Project links" }),
+    createElement("h2", { text: "JavaScript resources and maintainer backlink." }),
     createElement("p", {
-      text: "Continue to the main portfolio website for current projects, contact details, and recent work."
+      text: "The primary purpose of this site is the Liu.js utility module. The maintainer backlink is included here as a related project attribution."
     })
   );
 
-  contactLinks.forEach(([label, href]) => {
+  relatedLinks.forEach(([label, href]) => {
+    const isExternal = href.startsWith("http");
+    const attributes = { href, target: isExternal ? "_blank" : "_self" };
+
+    if (isExternal) {
+      attributes.rel = "noreferrer";
+    }
+
     actions.append(
       createElement("a", {
-        className: "contact-link",
-        html: `<span>${label}</span><span aria-hidden="true">Open</span>`,
-        attributes: { href, target: href.startsWith("http") ? "_blank" : "_self", rel: "noreferrer" }
+        className: "backlink-link",
+        attributes
       })
     );
+    const link = actions.lastElementChild;
+    link.append(createElement("span", { text: label }), createElement("span", { text: isExternal ? "Open" : "View" }));
   });
 
   panel.append(copy, actions);
@@ -292,10 +375,16 @@ function buildContactSection() {
 function buildFooter() {
   const footer = createElement("footer", { className: "site-footer" });
   const inner = createElement("div", { className: "footer-inner" });
+  const backlink = createElement("a", {
+    text: "tony-liu.com",
+    attributes: { href: project.maintainerSite, target: "_blank", rel: "noreferrer" }
+  });
+
   inner.append(
-    createElement("span", { text: `© ${new Date().getFullYear()} ${profile.name}` }),
-    createElement("span", { text: "Built with HTML, CSS, and JavaScript for GitHub Pages." })
+    createElement("span", { text: `© ${new Date().getFullYear()} ${project.name}` }),
+    createElement("span", { text: "Maintained by " })
   );
+  inner.lastElementChild.append(backlink);
   footer.append(inner);
   return footer;
 }
@@ -305,13 +394,7 @@ function renderApp() {
   const shell = createElement("div", { className: "site-shell" });
   const main = createElement("main");
 
-  main.append(
-    buildHero(),
-    buildWorkSection(),
-    buildCapabilitiesSection(),
-    buildAboutSection(),
-    buildContactSection()
-  );
+  main.append(buildHero(), buildModulesSection(), buildApiSection(), buildExamplesSection(), buildBacklinkSection());
   shell.append(buildHeader(), main, buildFooter());
   app.append(shell);
 }
