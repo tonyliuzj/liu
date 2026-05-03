@@ -1,6 +1,6 @@
-# Liu.js
+# Design Block Docs
 
-Static documentation page for Liu.js open source design blocks. The page opens with live examples, then provides implementation snippets.
+Static documentation page for liu.js open source design blocks. The page opens with live examples, then provides implementation snippets.
 
 ## Documented Blocks
 

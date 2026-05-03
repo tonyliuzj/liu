@@ -1,8 +1,9 @@
 const project = {
-  name: "Liu.js",
+  name: "Design Block Docs",
+  domainLabel: "liu.js",
   maintainerSite: "https://tony-liu.com",
   intro:
-    "Live previews and implementation notes for the open source design blocks used by Liu.js: a React iframe window component and plain JavaScript terminal controls.",
+    "Live previews and implementation notes for open source JavaScript design blocks published for liu.js.org: a React iframe window component and plain JavaScript terminal controls.",
   nav: [
     ["Preview", "#preview"],
     ["React", "#react"],
@@ -153,7 +154,7 @@ function buildHero() {
   const copy = createElement("div", { className: "hero-copy" });
 
   copy.append(
-    createElement("p", { className: "eyebrow", text: "Open source design docs" }),
+    createElement("p", { className: "eyebrow", text: `${project.domainLabel} open source design docs` }),
     createElement("h1", { text: project.name }),
     createElement("p", { className: "hero-text", text: project.intro })
   );
@@ -476,7 +477,7 @@ function buildTerminalPreview() {
   shell.append(terminal, wakeButton);
 
   updatePrompt();
-  appendLine("Liu.js terminal preview", "accent");
+  appendLine(`${project.domainLabel} terminal preview`, "accent");
   appendLine("Try: help, status, records", "dim");
   appendLine();
 
@@ -567,7 +568,7 @@ function buildBacklinkSection() {
     createElement("p", { className: "section-kicker", text: "Backlink" }),
     createElement("h2", { text: "Maintainer website." }),
     createElement("p", {
-      text: "This documentation page stays focused on the JavaScript and React design blocks above. The maintainer backlink is included here."
+      text: "This documentation page stays focused on the JavaScript and React design blocks published at liu.js.org. The maintainer backlink is included here."
     })
   );
 
