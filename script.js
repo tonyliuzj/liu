@@ -1,6 +1,6 @@
 const profile = {
   name: "Liu",
-  email: "hello@example.com",
+  website: "https://tony-liu.com",
   intro: "Product-minded frontend work with clean systems, sharp interactions, and interfaces that feel ready for real people.",
   about:
     "Liu is a compact portfolio for digital product work: clear visual systems, responsive frontend builds, and practical product thinking shaped around the details users notice.",
@@ -57,9 +57,7 @@ const capabilities = [
 ];
 
 const contactLinks = [
-  ["Email", `mailto:${profile.email}`],
-  ["GitHub", "https://github.com/"],
-  ["LinkedIn", "https://www.linkedin.com/"]
+  ["Main Portfolio", profile.website]
 ];
 
 function createElement(tag, options = {}) {
@@ -155,13 +153,13 @@ function buildHero() {
   actions.append(
     createElement("a", {
       className: "button primary",
-      text: "View Work",
-      attributes: { href: "#work" }
+      text: "Visit Main Portfolio",
+      attributes: { href: profile.website, target: "_blank", rel: "noreferrer" }
     }),
     createElement("a", {
       className: "button secondary",
-      text: "Email Liu",
-      attributes: { href: `mailto:${profile.email}` }
+      text: "tony-liu.com",
+      attributes: { href: profile.website, target: "_blank", rel: "noreferrer" }
     })
   );
   copy.append(actions);
@@ -271,7 +269,7 @@ function buildContactSection() {
     createElement("p", { className: "section-kicker", text: "Contact" }),
     createElement("h2", { text: "Ready for the next portfolio piece." }),
     createElement("p", {
-      text: "Send a note for collaborations, portfolio reviews, or focused web projects."
+      text: "Continue to the main portfolio website for current projects, contact details, and recent work."
     })
   );
 
