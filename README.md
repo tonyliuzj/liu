@@ -1,13 +1,14 @@
-# Design Block Docs
+# JavaScript Window Design
 
-Static documentation page for liu.js open source design blocks. The page opens with live examples, then provides implementation snippets.
+Static documentation page for liu.js JavaScript window design patterns. The page opens with separate iframe-window and terminal-window previews, then provides implementation snippets.
 
 ## Documented Blocks
 
 - `WindowIframe` React component for `src/pages/index.js`.
 - Status and monitor `WindowIframe` usage sections.
 - Plain JavaScript terminal scripts to paste before `</body>`.
-- Live preview of the iframe window and terminal behaviors.
+- Live iframe window preview and terminal window preview.
+- Terminal logic notes for prompt state, window state, command dispatch, and keyboard control.
 - Contact link to `https://tony-liu.com`.
 
 ## Files

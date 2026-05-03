@@ -1,14 +1,13 @@
 const project = {
-  name: "Design Block Docs",
+  name: "JavaScript Window Design",
   domainLabel: "liu.js",
   maintainerSite: "https://tony-liu.com",
   intro:
-    "Live previews and implementation notes for open source JavaScript design blocks published for liu.js.org: a React iframe window component and plain JavaScript terminal controls.",
+    "Live previews and implementation notes for JavaScript window patterns published for liu.js.org: a React iframe window component and plain JavaScript terminal controls.",
   nav: [
-    ["Preview", "#preview"],
-    ["React", "#react"],
-    ["Usage", "#usage"],
-    ["Terminal", "#terminal"],
+    ["Iframe", "#iframe-window"],
+    ["Terminal", "#terminal-window"],
+    ["Docs", "#react"],
     ["Contact", "#contact"]
   ]
 };
@@ -25,6 +24,29 @@ const iframePreviews = [
     title: "Monitor",
     footerLabel: "PocketView",
     footerHref: "https://github.com/tonyliuzj/pocketview"
+  }
+];
+
+const terminalLogic = [
+  {
+    title: "Prompt State",
+    description:
+      "The terminal keeps a home directory, current directory, compact path label, command history, and history cursor in JavaScript state."
+  },
+  {
+    title: "Window State",
+    description:
+      "Close, minimize, restore, and fullscreen are class toggles on the terminal window plus a body class for fullscreen scroll locking."
+  },
+  {
+    title: "Command Dispatch",
+    description:
+      "Commands are normalized from input, echoed into output, looked up in a command map, and rendered as terminal lines with status styling."
+  },
+  {
+    title: "Keyboard Control",
+    description:
+      "Enter runs a command, arrow keys move through history, Ctrl+L clears output, and clicking command chips runs predefined commands."
   }
 ];
 
@@ -163,13 +185,13 @@ function buildHero() {
   actions.append(
     createElement("a", {
       className: "button primary",
-      text: "View Preview",
-      attributes: { href: "#preview" }
+      text: "Iframe Preview",
+      attributes: { href: "#iframe-window" }
     }),
     createElement("a", {
       className: "button secondary",
-      text: "Implementation Docs",
-      attributes: { href: "#usage" }
+      text: "Terminal Logic",
+      attributes: { href: "#terminal-window" }
     })
   );
   copy.append(actions);
@@ -489,23 +511,56 @@ function buildTerminalPreview() {
   return shell;
 }
 
-function buildPreviewSection() {
-  const section = createElement("section", { className: "section preview-section", id: "preview" });
+function buildIframePreviewSection() {
+  const section = createElement("section", { className: "section preview-section", id: "iframe-window" });
   const inner = createElement("div", { className: "section-inner" });
-  const previewGrid = createElement("div", { className: "preview-grid" });
+  const previewGrid = createElement("div", { className: "iframe-preview-grid" });
   const primaryPreview = buildWindowPreview(iframePreviews[0]);
-  const sideRail = createElement("div", { className: "preview-side-rail" });
+  const secondaryPreview = buildWindowPreview(iframePreviews[1]);
 
   primaryPreview.classList.add("is-primary");
-  sideRail.append(buildWindowPreview(iframePreviews[1]), buildTerminalPreview());
-  previewGrid.append(primaryPreview, sideRail);
+  previewGrid.append(primaryPreview, secondaryPreview);
   inner.append(
     buildSectionHeading(
-      "Example preview",
-      "See the components first, then copy the implementation.",
-      "The iframe cards preview the browser-window wrapper, reload control, external-open action, click-to-interact overlay, and project footer. The terminal preview exercises the provided command and window-control behavior."
+      "Iframe window preview",
+      "Browser-style embeds for live web tools.",
+      "These previews show the WindowIframe pattern: framed URL bar, reload control, external-open action, click-to-interact overlay, sandboxed iframe, and project footer."
     ),
     previewGrid
+  );
+  section.append(inner);
+  return section;
+}
+
+function buildTerminalLogicPanel() {
+  const panel = createElement("div", { className: "terminal-logic-panel" });
+
+  terminalLogic.forEach((item, index) => {
+    const card = createElement("article", { className: "logic-card" });
+    card.append(
+      createElement("span", { className: "logic-index", text: String(index + 1).padStart(2, "0") }),
+      createElement("h3", { text: item.title }),
+      createElement("p", { text: item.description })
+    );
+    panel.append(card);
+  });
+
+  return panel;
+}
+
+function buildTerminalPreviewSection() {
+  const section = createElement("section", { className: "section alt preview-section", id: "terminal-window" });
+  const inner = createElement("div", { className: "section-inner" });
+  const layout = createElement("div", { className: "terminal-preview-layout" });
+
+  layout.append(buildTerminalPreview(), buildTerminalLogicPanel());
+  inner.append(
+    buildSectionHeading(
+      "Terminal window preview",
+      "Shell-style controls with plain JavaScript logic.",
+      "The terminal preview separates visual window controls from command handling. The notes explain how the scripts manage prompt state, output, history, window classes, and keyboard shortcuts."
+    ),
+    layout
   );
   section.append(inner);
   return section;
@@ -619,7 +674,13 @@ function renderApp() {
   const shell = createElement("div", { className: "site-shell" });
   const main = createElement("main");
 
-  main.append(buildHero(), buildPreviewSection(), ...snippetGroups.map(buildSnippetSection), buildContactSection());
+  main.append(
+    buildHero(),
+    buildIframePreviewSection(),
+    buildTerminalPreviewSection(),
+    ...snippetGroups.map(buildSnippetSection),
+    buildContactSection()
+  );
   shell.append(buildHeader(), main, buildFooter());
   app.append(shell);
 }
