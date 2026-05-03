@@ -1,20 +1,19 @@
 # Liu.js
 
-Static documentation site and ESM utility module for small browser JavaScript projects.
+Static documentation page for Liu.js open source design blocks.
 
-## Included Helpers
+## Documented Blocks
 
-- `queryState(defaults)` for query-string backed UI state.
-- `delegate(root, selector, type, handler)` for container-level DOM events.
-- `latestTask(worker)` for aborting stale async work.
-- `renderList(container, items, renderItem)` for simple list rendering.
+- `WindowIframe` React component for `src/pages/index.js`.
+- Status and monitor `WindowIframe` usage sections.
+- Plain JavaScript terminal scripts to paste before `</body>`.
+- Maintainer backlink to `https://tony-liu.com`.
 
 ## Files
 
-- `index.html` loads the documentation shell.
-- `script.js` renders the Liu.js documentation page.
-- `liu.js` exports the JavaScript utility helpers documented by the site.
-- `styles.css` contains the responsive layout and visual system.
+- `index.html` stores the source snippets as hidden raw text and loads the docs shell.
+- `script.js` renders the documentation UI and code-copy buttons.
+- `styles.css` contains the responsive documentation layout.
 - `CNAME` configures the custom domain `liu.js.org`.
 
 ## Publish With GitHub Pages
@@ -25,4 +24,4 @@ Static documentation site and ESM utility module for small browser JavaScript pr
 4. Select `main` and choose the root folder `/`.
 5. Save the Pages setting and wait for GitHub to publish the site.
 
-Because `index.html`, `liu.js`, and `CNAME` are in the repository root, no build command is needed.
+No build command is needed.

@@ -3,17 +3,351 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Liu.js | Browser JavaScript Utilities</title>
-    <meta name="description" content="Liu.js is a dependency-free browser JavaScript utility module for URL state, delegated events, async tasks, and DOM rendering.">
+    <title>Liu.js | Open Source Design Docs</title>
+    <meta name="description" content="Documentation for Liu.js open source design blocks: a React iframe window component and terminal JavaScript controls.">
     <meta name="theme-color" content="#111318">
-    <meta property="og:title" content="Liu.js | Browser JavaScript Utilities">
-    <meta property="og:description" content="Documentation and examples for a small browser-first JavaScript utility module.">
+    <meta property="og:title" content="Liu.js | Open Source Design Docs">
+    <meta property="og:description" content="React and JavaScript implementation notes for Liu.js open source design blocks.">
     <meta property="og:type" content="website">
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
   </head>
   <body>
-    <a class="skip-link" href="#modules">Skip to modules</a>
+    <a class="skip-link" href="#react">Skip to React docs</a>
     <div id="app"></div>
+
+    <textarea id="snippet-lucide-import" hidden>
+import { ExternalLink, MousePointer2, RefreshCw } from "lucide-react"
+    </textarea>
+
+    <textarea id="snippet-window-iframe" hidden>
+function WindowIframe({ src, title, footer }) {
+    const [isInteracting, setIsInteracting] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
+
+    return (
+        <Card className="bg-white/5 border-white/10 backdrop-blur-sm overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+                <div className="flex gap-1.5 shrink-0">
+                    <span className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                    <span className="w-3 h-3 rounded-full bg-green-500/80" />
+                </div>
+
+                <div className="flex-1 min-w-0 ml-2 bg-black/25 rounded-md px-3 py-1 text-xs text-slate-500 font-mono text-center truncate">
+                    {src}
+                </div>
+
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10"
+                    onClick={() => setReloadKey((key) => key + 1)}
+                    aria-label={`Reload ${title}`}
+                >
+                    <RefreshCw className="w-4 h-4" />
+                </Button>
+
+                <Button
+                    asChild
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10"
+                    aria-label={`Open ${title}`}
+                >
+                    <a href={src} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4" />
+                    </a>
+                </Button>
+            </div>
+
+            <CardContent className="p-0">
+                <div
+                    className="relative w-full h-[60vh] md:h-[80vh] bg-black/30"
+                    onMouseLeave={() => setIsInteracting(false)}
+                >
+                    <button
+                        type="button"
+                        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/45 backdrop-blur-[2px] transition-all duration-300 ${
+                            isInteracting
+                                ? 'opacity-0 pointer-events-none'
+                                : 'opacity-100 hover:bg-black/35'
+                        }`}
+                        onClick={() => setIsInteracting(true)}
+                    >
+                        <span className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white">
+                            <MousePointer2 className="w-4 h-4" />
+                            Click to interact
+                        </span>
+                    </button>
+
+                    <iframe
+                        key={reloadKey}
+                        src={src}
+                        title={title}
+                        className={`w-full h-full border-0 transition-opacity duration-300 ${
+                            isInteracting
+                                ? 'pointer-events-auto opacity-100'
+                                : 'pointer-events-none opacity-45'
+                        }`}
+                        sandbox="allow-forms allow-same-origin allow-scripts"
+                    />
+                </div>
+            </CardContent>
+
+            {footer && (
+                <CardFooter className="py-2 px-4 bg-white/5 border-t border-white/10 flex justify-end">
+                    {footer}
+                </CardFooter>
+            )}
+        </Card>
+    );
+}
+    </textarea>
+
+    <textarea id="snippet-status-section" hidden>
+<section id="status" className="w-full max-w-6xl mx-auto p-4 mb-32 relative z-10 scroll-mt-14">
+    <WindowIframe
+        src="https://statusno.de/"
+        title="System Status"
+        footer={
+            <p className="text-xs text-slate-500">
+                Powered by{' '}
+                <a
+                    {...externalLinkProps}
+                    href="https://github.com/tonyliuzj/kumaview"
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                    KumaView
+                </a>
+            </p>
+        }
+    />
+</section>
+    </textarea>
+
+    <textarea id="snippet-monitor-section" hidden>
+<section id="monitor" className="w-full max-w-6xl mx-auto p-4 mb-32 relative z-10 scroll-mt-14">
+    <WindowIframe
+        src="https://monitorno.de"
+        title="Monitor"
+        footer={
+            <p className="text-xs text-slate-500">
+                Powered by{' '}
+                <a
+                    {...externalLinkProps}
+                    href="https://github.com/tonyliuzj/pocketview"
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                    PocketView
+                </a>
+            </p>
+        }
+    />
+</section>
+    </textarea>
+
+    <textarea id="snippet-terminal-state" hidden>
+<script>
+const input = document.getElementById('cmd-input');
+const output = document.getElementById('output');
+const terminalBody = document.getElementById('terminal-body');
+const terminalWindow = document.querySelector('.terminal-window');
+const promptElement = document.getElementById('prompt');
+const screenPath = document.getElementById('screen-path');
+
+const homeDirectory = '/home/visitor';
+let currentDirectory = homeDirectory;
+let history = [];
+let historyIndex = 0;
+
+function compactPath(path) {
+  if (path === homeDirectory) return '~';
+  if (path.startsWith(`${homeDirectory}/`)) return `~${path.slice(homeDirectory.length)}`;
+  return path;
+}
+
+function updatePrompt() {
+  const label = `visitor@nameserver ${compactPath(currentDirectory)} %`;
+  promptElement.textContent = label;
+  if (screenPath) screenPath.textContent = compactPath(currentDirectory);
+}
+
+function scrollToBottom() {
+  terminalBody.scrollTop = terminalBody.scrollHeight;
+}
+</script>
+    </textarea>
+
+    <textarea id="snippet-terminal-window" hidden>
+<script>
+function setTerminalFullscreen(isFullscreen) {
+  terminalWindow.classList.remove('is-closed', 'is-minimized');
+  terminalWindow.classList.toggle('is-fullscreen', isFullscreen);
+  document.body.classList.toggle('terminal-fullscreen-open', isFullscreen);
+  scrollToBottom();
+}
+
+function restoreTerminal() {
+  terminalWindow.classList.remove('is-closed', 'is-minimized', 'is-fullscreen');
+  document.body.classList.remove('terminal-fullscreen-open');
+  input.focus();
+}
+
+function toggleTerminalMinimized() {
+  const minimized = !terminalWindow.classList.contains('is-minimized');
+  terminalWindow.classList.remove('is-closed', 'is-fullscreen');
+  terminalWindow.classList.toggle('is-minimized', minimized);
+  document.body.classList.remove('terminal-fullscreen-open');
+}
+
+function closeTerminalWindow() {
+  terminalWindow.classList.remove('is-fullscreen', 'is-minimized');
+  terminalWindow.classList.add('is-closed');
+  document.body.classList.remove('terminal-fullscreen-open');
+}
+
+document.querySelectorAll('[data-window-action]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const action = button.dataset.windowAction;
+
+    if (action === 'fullscreen') setTerminalFullscreen(!terminalWindow.classList.contains('is-fullscreen'));
+    if (action === 'minimize') toggleTerminalMinimized();
+    if (action === 'close') closeTerminalWindow();
+    if (action === 'wake' || action === 'restore') restoreTerminal();
+  });
+});
+</script>
+    </textarea>
+
+    <textarea id="snippet-terminal-commands" hidden>
+<script>
+function appendLine(text = '', className = '') {
+  const line = document.createElement('div');
+  line.className = className ? `terminal-line ${className}` : 'terminal-line';
+  line.textContent = text;
+  output.appendChild(line);
+  scrollToBottom();
+}
+
+function echoCommand(command) {
+  const line = document.createElement('div');
+  line.className = 'terminal-line echo system';
+
+  const prompt = document.createElement('span');
+  prompt.className = 'prompt';
+  prompt.textContent = promptElement.textContent;
+
+  const text = document.createElement('span');
+  text.textContent = command;
+
+  line.append(prompt, text);
+  output.appendChild(line);
+}
+
+const commands = {
+  help: [
+    'Available commands:',
+    '  help       Show commands',
+    '  clear      Clear terminal',
+    '  status     Show system status',
+    '  records    List DNS record types'
+  ],
+  status: [
+    'Shell Status',
+    'Host: nameserver',
+    'User: visitor',
+    'Live DNS: enabled',
+    'Window controls: active'
+  ],
+  records: [
+    'A      IPv4 address',
+    'AAAA   IPv6 address',
+    'CNAME  Alias record',
+    'MX     Mail exchanger',
+    'NS     Nameserver',
+    'SOA    Start of authority',
+    'TXT    Text record'
+  ]
+};
+
+function runCommand(rawCommand) {
+  const command = rawCommand.trim();
+  if (!command) return;
+
+  echoCommand(command);
+  history.push(command);
+  historyIndex = history.length;
+
+  if (command === 'clear') {
+    output.innerHTML = '';
+    return;
+  }
+
+  const result = commands[command];
+
+  if (!result) {
+    appendLine(`nameserver-sh: command not found: ${command}`, 'error');
+    appendLine('Try: help', 'dim');
+    appendLine();
+    return;
+  }
+
+  result.forEach((line, index) => {
+    appendLine(line, index === 0 ? 'accent' : '');
+  });
+
+  appendLine();
+}
+</script>
+    </textarea>
+
+    <textarea id="snippet-terminal-keyboard" hidden>
+<script>
+input.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    const command = input.value;
+    input.value = '';
+    runCommand(command);
+  }
+
+  if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (historyIndex > 0) {
+      historyIndex -= 1;
+      input.value = history[historyIndex];
+    }
+  }
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (historyIndex < history.length - 1) {
+      historyIndex += 1;
+      input.value = history[historyIndex];
+    } else {
+      historyIndex = history.length;
+      input.value = '';
+    }
+  }
+
+  if (event.ctrlKey && event.key.toLowerCase() === 'l') {
+    event.preventDefault();
+    output.innerHTML = '';
+  }
+});
+
+document.querySelectorAll('[data-command]').forEach((button) => {
+  button.addEventListener('click', () => {
+    restoreTerminal();
+    runCommand(button.dataset.command);
+  });
+});
+
+terminalBody.addEventListener('click', () => input.focus());
+
+updatePrompt();
+</script>
+    </textarea>
   </body>
 </html>

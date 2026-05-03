@@ -314,6 +314,84 @@ textarea {
   font-size: 1.04rem;
 }
 
+.doc-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.doc-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  background: #f1f4f2;
+  padding: 14px 16px;
+}
+
+.code-title {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.code-title strong {
+  font-size: 0.95rem;
+}
+
+.code-title span {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-button {
+  min-width: 74px;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 760;
+}
+
+.copy-button:hover,
+.copy-button:focus-visible {
+  background: #edf2ef;
+  outline: none;
+}
+
+.snippet-block {
+  width: 100%;
+  max-height: 620px;
+  margin: 0;
+  overflow: auto;
+  background: #111318;
+  color: #f4f7f5;
+  padding: 18px;
+}
+
+.snippet-block code {
+  display: block;
+  min-width: min-content;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+  line-height: 1.58;
+  white-space: pre;
+}
+
 .module-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -677,6 +755,15 @@ textarea {
   .section-title,
   .backlink-panel h2 {
     font-size: 1.95rem;
+  }
+
+  .code-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .copy-button {
+    width: 100%;
   }
 
   .hero-actions {
