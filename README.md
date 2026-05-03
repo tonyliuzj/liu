@@ -1,6 +1,6 @@
-# JavaScript Window Design
+# PaneKit
 
-Static documentation page for liu.js JavaScript window design patterns. The page opens with separate iframe-window and terminal-window previews, then provides implementation snippets.
+Static documentation page for JavaScript window design patterns. The page opens with separate iframe-window and terminal-window previews, then provides implementation snippets.
 
 ## Documented Blocks
 
@@ -16,7 +16,7 @@ Static documentation page for liu.js JavaScript window design patterns. The page
 - `index.html` stores the source snippets as hidden raw text and loads the docs shell.
 - `script.js` renders the documentation UI and code-copy buttons.
 - `styles.css` contains the responsive documentation layout.
-- `CNAME` configures the custom domain `liu.js.org`.
+- `CNAME` configures the custom domain for GitHub Pages.
 
 ## Publish With GitHub Pages
 

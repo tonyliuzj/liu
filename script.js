@@ -1,9 +1,8 @@
 const project = {
-  name: "JavaScript Window Design",
-  domainLabel: "liu.js",
+  name: "PaneKit",
   maintainerSite: "https://tony-liu.com",
   intro:
-    "Live previews and implementation notes for JavaScript window patterns published for liu.js.org: a React iframe window component and plain JavaScript terminal controls.",
+    "Live previews and implementation notes for JavaScript window patterns: a React iframe window component and plain JavaScript terminal controls.",
   nav: [
     ["Iframe", "#iframe-window"],
     ["Terminal", "#terminal-window"],
@@ -176,7 +175,7 @@ function buildHero() {
   const copy = createElement("div", { className: "hero-copy" });
 
   copy.append(
-    createElement("p", { className: "eyebrow", text: `${project.domainLabel} open source design docs` }),
+    createElement("p", { className: "eyebrow", text: "Open source JavaScript window docs" }),
     createElement("h1", { text: project.name }),
     createElement("p", { className: "hero-text", text: project.intro })
   );
@@ -504,7 +503,7 @@ function buildTerminalPreview() {
   shell.append(label, terminal, wakeButton);
 
   updatePrompt();
-  appendLine(`${project.domainLabel} terminal preview`, "accent");
+  appendLine(`${project.name} terminal preview`, "accent");
   appendLine("Try: help, status, records", "dim");
   appendLine();
 
@@ -627,7 +626,7 @@ function buildContactSection() {
     createElement("p", { className: "section-kicker", text: "Contact" }),
     createElement("h2", { text: "Maintainer contact." }),
     createElement("p", {
-      text: "This documentation page stays focused on the JavaScript and React design blocks published at liu.js.org. For related work and contact details, use the maintainer site."
+      text: "This documentation page stays focused on JavaScript and React window design blocks. For related work and contact details, use the maintainer site."
     })
   );
 
