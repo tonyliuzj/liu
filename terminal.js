@@ -556,7 +556,7 @@ document.querySelectorAll("[data-window-action]").forEach((button) => {
 });
 
 updatePrompt();
-line("Panel4Liu terminal ready", "accent");
+line("PanelKit terminal ready", "accent");
 line("Try: help, ls -la, dig nameserver.ing ANY, zone nameserver.ing", "dim");
 line();
 input.focus();

@@ -1,4 +1,4 @@
-# Panel4Liu
+# PanelKit
 
 Static documentation site for JavaScript/React window UI patterns.
 
