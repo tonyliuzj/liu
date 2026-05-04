@@ -1,30 +1,14 @@
 # Panel4Liu
 
-Static documentation page for JavaScript window design patterns. The page opens with separate iframe-window and terminal-window previews, then provides implementation snippets.
+Static documentation site for JavaScript/React window UI patterns.
 
-## Documented Blocks
+It includes live previews for iframe-style windows and terminal-style windows, plus reusable implementation snippets for frontend projects such as React or Next.js.
 
-- `WindowIframe` React component for `src/pages/index.js`.
-- Status and monitor `WindowIframe` usage sections.
-- Feature-rich `terminal.js` shell with DNS tools, virtual files, history, autocomplete, and async command handling.
-- Live iframe window preview and terminal window preview.
-- Terminal logic notes for prompt state, window state, command dispatch, and keyboard control.
-- Contact link to `https://tony-liu.com`.
+## Features
 
-## Files
-
-- `index.html` stores the source snippets as hidden raw text and loads the docs shell.
-- `script.js` renders the documentation UI and code-copy buttons.
-- `terminal.js` powers the live terminal preview and can be reused as the standalone terminal implementation.
-- `styles.css` contains the responsive documentation layout.
-- `CNAME` configures the custom domain for GitHub Pages.
-
-## Publish With GitHub Pages
-
-1. Push this repository to GitHub.
-2. Open the repository on GitHub and go to **Settings** > **Pages**.
-3. Choose **Deploy from a branch**.
-4. Select `main` and choose the root folder `/`.
-5. Save the Pages setting and wait for GitHub to publish the site.
-
-No build command is needed.
+- `WindowIframe` React component example
+- Iframe window and terminal window previews
+- Reusable `terminal.js` implementation
+- Terminal features: command history, autocomplete, async commands, virtual files, and DNS tools
+- Copyable code snippets
+- Responsive documentation layout
